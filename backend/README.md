@@ -1,13 +1,23 @@
-# Construindo imagem
+# Spring boot based CRUD for lawyers management
 
-docker build -t trt22-demo-backend .
-docker save -o trt22-demo-backend.tar trt22-demo-backend
-scp trt22-demo-backend.tar root@10.22.20.11:~
+Restful backend for create, update, delete and list lawyers.
+In the default (development) profile, the backend runs the src/main/resources/data.sql script
+to prepopulate the H2 Database
 
-# la no servidor com docker
+## Implementation Details
 
-docker load -i trt22-demo-backend.tar
-docker run -d -it --link postgres-pje -e DATABASE_URL=jdbc:postgresql://postgres-pje/trt22-demo-angular --name trt22-demo-backend -p 9090:8080 trt22-demo-backend
+Source code was written in portuguese language, but is dead simple to understand how it is structured
 
-#levantar angular
-ng serve --prod
+- **src/main/java/br/jus/trt22/demo/config** package contains spring beans customizing the runtime context
+- **src/main/java/br/jus/trt22/demo/modelo** package contains the entity class Advogado (lawyer)
+- **src/main/java/br/jus/trt22/demo/repositorio** package contains the restful controller for the Advogado entity
+
+# How to run
+
+You must have the JDK >= 9 properly installed on your machine.
+Just run either `mvnw.cmd spring-boot:run` (on Windows machine) or `mvnw spring-boot:run` (on a linux machine)
+
+# How to build a docker image
+
+just run `docker build -t demo-backend .`
+and to start a docker container `docker run --rm -it -p 8080:8080 demo-backend`

@@ -1,4 +1,4 @@
-package br.jus.trt22.demo.model;
+package br.jus.trt22.demo.modelo;
 
 import java.util.Objects;
 

@@ -12,15 +12,19 @@ TODO
 
 ## Development server
 
-TODO
+Run `./run-dev.sh` in order to get up the spring boot backend server on localhost:8080
 
 ## Build
 
-TODO
+Run `./build.sh` in order to package the spring boot backend server. The script will generate the file ./backend/target/demo-backend.jar
+
+To run with the development configurations, just run `java -jar ./backend/target/demo-backend.jar`.
+To run with the production profile, run `java -jar -Dspring.profiles.active=production ./backend/target/demo-backend.jar`
+
 
 ## Running unit tests
 
-TODO
+Inside the folder `backend` just run `mvn test`
 
 ## Running end-to-end tests
 

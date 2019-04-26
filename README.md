@@ -3,6 +3,8 @@
 This project goal is to build a simple CRUD frontend UI for lawyers with JWT authentication.
 The identity and access management is done with keycloack.
 The restful API on the backend was created with SpringBoot.
+The folder **backend** contains the spring boot project for the resful backend
+The folder **frontend** contains the angular UI 
 
 ## Implementation Details, how to build, how to run, how to ...
 

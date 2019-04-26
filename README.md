@@ -4,28 +4,6 @@ This project goal is to build a simple CRUD frontend UI for lawyers with JWT aut
 The identity and access management is done with keycloack.
 The restful API on the backend was created with SpringBoot.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.3.
+## Implementation Details, how to build, how to run, how to ...
 
-## Implementation Details
-
-TODO
-
-## Development server
-
-Run `./run-dev.sh` in order to get up the spring boot backend server on localhost:8080
-
-## Build
-
-Run `./build.sh` in order to package the spring boot backend server. The script will generate the file ./backend/target/demo-backend.jar
-
-To run with the development configurations, just run `java -jar ./backend/target/demo-backend.jar`.
-To run with the production profile, run `java -jar -Dspring.profiles.active=production ./backend/target/demo-backend.jar`
-
-
-## Running unit tests
-
-Inside the folder `backend` just run `mvn test`
-
-## Running end-to-end tests
-
-TODO
+Both folders **frontend** and **backend** have a README.md file describing implementation details, how to run, how to build, how to build Docker containers and many more .. feel free to contact me on any doubts

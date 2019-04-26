@@ -1,7 +1,8 @@
 HELP.md
 **/target/
-!.mvn/wrapper/maven-wrapper.jar
+backend/.mvn/wrapper/maven-wrapper.jar
 **/*.TRT22
+**/*.trt22
 
 ### STS ###
 **/.apt_generated

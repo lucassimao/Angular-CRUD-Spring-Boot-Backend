@@ -8,12 +8,12 @@ services:
       dockerfile: ./Dockerfile
       args:
         - ENV=production
-        - DB_IP mysql
-        - DB_PORT 3306
-        - DATASOURCE_URL=jdbc:mysql://mysql:3606/trt22-demo-angular
-        - DATABASE=MYSQL
+        - DB_IP=mysql
+        - DB_PORT=3306
+        - DATABASE_TYPE=MYSQL
         - DB_USERNAME=app
         - DB_PASSWORD=123
+        - DB_NAME=crud-angular-spring-boot
     container_name: demo-backend1
     restart: on-failure:5
     depends_on:
@@ -23,10 +23,11 @@ services:
       - MYSQL_USER=app
       - MYSQL_PASSWORD=123
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=crud-angular-spring-boot
     container_name: demo-mysql
-    image: mariadb
+    image: mysql:8.0.16
     volumes:
-      - db-data:/var/lib/mysql/data:rw
+      - db-data:/var/lib/mysql:rw
   # nginx:
   #   image: nginx:latest
   #   depends_on:

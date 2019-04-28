@@ -7,14 +7,31 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
       args: 
-        - BACKEND=?
-        - KEYCLOACK=?
-        - KEYCLOACK_CLIENT_ID=?
+        - BACKEND=http://localhost:8080
+        - KEYCLOACK=http://localhost:8081/auth/realms/master/protocol/openid-connect/token
+        - KEYCLOACK_CLIENT_ID=demo-angular
     container_name: demo-frontend1
     ports: 
       - "80:80"     
     depends_on: 
       - backend1
+      - keycloak
+  keycloak:
+      image: jboss/keycloak:latest
+      ports: 
+        - "8081:8080"
+      restart: "unless-stopped"
+      depends_on:
+        - backend1
+      environment:
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: 123456
+        KEYCLOAK_LOGLEVEL: DEBUG
+        DB_ADDR: mysql
+        DB_PORT: 3306
+        DB_USER: keycloak
+        DB_PASSWORD: keycloak123
+        DB_DATABASE: keycloak_db
   backend1:
     build:
       context: ./backend
@@ -40,6 +57,8 @@ services:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=crud-angular-spring-boot
     container_name: demo-mysql
-    image: mysql:8.0.16
+    image: mysql:5.7.26
     volumes:
       - db-data:/var/lib/mysql:rw
+      - ./keycloak.sql:/docker-entrypoint-initdb.d/keycloak.sql
+

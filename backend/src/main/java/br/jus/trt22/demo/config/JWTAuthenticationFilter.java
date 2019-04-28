@@ -43,7 +43,7 @@ import org.springframework.web.filter.GenericFilterBean;
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
-    @Value("${keycloak.public_key}")
+    @Value("${keycloak.publickey}")
     private String pKey;
     @Autowired
     private ObjectMapper objectMapper;

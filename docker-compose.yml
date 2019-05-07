@@ -17,12 +17,15 @@ services:
       - backend1
       - keycloak
   keycloak:
-      image: jboss/keycloak:latest
+      container_name: demo-keycloak1
+      image: jboss/keycloak:6.0.1
       ports: 
         - "8081:8080"
       restart: "unless-stopped"
       depends_on:
         - backend1
+      volumes:
+        - ./keystore.jks:/home/keystore.jks
       environment:
         KEYCLOAK_USER: admin
         KEYCLOAK_PASSWORD: 123456
@@ -32,7 +35,10 @@ services:
         DB_USER: keycloak
         DB_PASSWORD: keycloak123
         DB_DATABASE: keycloak_db
-        # JAVA_OPTS:  -server -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=realm.json -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true 
+        KEYSTORE_STORE_PASSWORD: 123456
+        KEYSTORE_KEY_PASSWORD: 123456
+        KEYSTORE_ALIAS: demo-angular  
+        KEYSTORE: /home/keystore.jks
   backend1:
     build:
       context: ./backend
@@ -45,8 +51,14 @@ services:
         - DB_USERNAME=app
         - DB_PASSWORD=123
         - DB_NAME=crud-angular-spring-boot
+        - KEYSTORE=/home/keystore.jks
+        - KEYSTORE_STORE_PASSWORD=123456
+        - KEYSTORE_KEY_PASSWORD=123456
+        - KEYSTORE_ALIAS=demo-angular        
     container_name: demo-backend1
     restart: on-failure:5
+    volumes:
+      - ./keystore.jks:/home/keystore.jks    
     ports: 
       - "8080:8080"       
     depends_on:
@@ -62,4 +74,5 @@ services:
     volumes:
       - db-data:/var/lib/mysql:rw
       - ./keycloak.sql:/docker-entrypoint-initdb.d/keycloak.sql
+
 

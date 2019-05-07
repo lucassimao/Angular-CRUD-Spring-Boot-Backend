@@ -1,8 +1,20 @@
 package br.jus.trt22.demo.config;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.Key;
 import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -43,12 +55,44 @@ import org.springframework.web.filter.GenericFilterBean;
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
-    @Value("${keycloak.publickey}")
-    private String pKey;
+    @Value("${keycloak.keystore}")
+    private String keystoreFile;
+
+    @Value("${keystore.key.password}")
+    private String keyPassword;
+
+    @Value("${keystore.store.password}")
+    private String storePassword;
+
+    @Value("${keystore.alias}")
+    private String storeAlias;
+
     @Autowired
     private ObjectMapper objectMapper;
     private Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
     private static final String HEADER_STRING = "Authorization";
+    private KeyPair keyPair;
+
+    @Override
+    protected void initFilterBean() throws ServletException {
+        try {
+            FileInputStream fis = new FileInputStream(this.keystoreFile);
+
+            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keystore.load(fis, this.storePassword.toCharArray());
+            Key key = keystore.getKey(this.storeAlias, this.keyPassword.toCharArray());
+            Certificate cert = keystore.getCertificate(this.storeAlias);
+            PublicKey publicKey = cert.getPublicKey();
+            this.keyPair = new KeyPair(publicKey, (PrivateKey) key);
+
+            logger.info("Par de chaves carregado com sucesso!");
+
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException e) {
+            logger.error("Não foi possível ler o keystore", e);
+        } catch (IOException e) {
+            logger.error("Não foi possível ler o keystore", e);
+        }
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -78,14 +122,27 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
         String token = request.getHeader(HEADER_STRING);
 
         if (token != null) {
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.getDecoder().decode(pKey));
-            KeyFactory kf = KeyFactory.getInstance("RSA");
+            // String pKey = "..."
+            // logger.info(pKey);
+            // X509EncodedKeySpec spec = new
+            // X509EncodedKeySpec(Base64.getDecoder().decode(pKey));
+            // KeyFactory kf = KeyFactory.getInstance("RSA");
 
-            RSAPublicKey publicKey = (RSAPublicKey) kf.generatePublic(spec);
-            Algorithm algorithm = Algorithm.RSA256(publicKey, null);
+            // RSAPublicKey publicKey = (RSAPublicKey) kf.generatePublic(spec);
+            // Algorithm algorithm = Algorithm.RSA256(publicKey, null);
+            // JWTVerifier verifier = JWT.require(algorithm).acceptLeeway(5000).build();
+            // DecodedJWT jwt = verifier.verify(token);
 
-            JWTVerifier verifier = JWT.require(algorithm).acceptLeeway(5000).build();
-            DecodedJWT jwt = verifier.verify(token);
+            DecodedJWT jwt = null;
+            if (this.keyPair != null) {
+                Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) this.keyPair.getPublic(),
+                        (RSAPrivateKey) this.keyPair.getPrivate());
+                JWTVerifier verifier = JWT.require(algorithm).acceptLeeway(5000).build();
+                jwt = verifier.verify(token);
+            } else {
+                jwt = JWT.decode(token);
+                this.logger.warn("Token JWT foi decodificado sem validar assinatura!");
+            }
 
             String username = jwt.getSubject();
 

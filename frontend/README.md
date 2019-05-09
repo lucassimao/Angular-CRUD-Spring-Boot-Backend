@@ -17,24 +17,18 @@ Source code has been written in portuguese language, but is dead simple to under
 
 ## Development server
 
-You must have at least the node version 10 properly installed.
-Run `npm install`
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Get the spring boot backend up running `./mvnw  spring-boot:run` inside the **backend** folder. The server will start at http://localhost:8080
+- Start and setup a keycloak container instance
+    - run  `docker run --rm --name keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -e DB_VENDOR=h2 -p 8081:8080 jboss/keycloak:6.0.1`
+    - Wait the keycloak initialization
+    - In the project's root folder (1 folder above this one), run `docker exec -i  keycloak bash < setup_keycloak.sh`
+- You must have at least the node version 10 properly installed.
+- Inside the **frontend** folder
+    - run `npm install`
+    - run `ng serve` to start the dev server. 
+- Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Use the login **user1** and the password **11235** to login 
 
 ## Build
 
 run `ng build --prod --aot` to generate the production version on the `dist/` dir
-
-## How to build a docker image
-
-`ng build --prod --aot`
-`docker build -t demo-frontend .`
-`docker run --rm -it -p 80:80 --name demo-frontend demo-frontend`
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).

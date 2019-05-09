@@ -2,7 +2,7 @@
 
 Restful backend for create, update, delete and list lawyers.
 In the default (development) profile, the backend runs the src/main/resources/data.sql script
-to prepopulate the H2 Database
+to prepopulate the H2 Database. When running inside the docker container the production mode is activated and the environment variables override the database properties to connect to a running mysql instance
 
 ## Implementation Details
 
@@ -19,13 +19,9 @@ Just run either `mvnw.cmd spring-boot:run` (on Windows machine) or `mvnw spring-
 
 # How to build
 
-Run `mvn clean package` in order to package the spring boot backend server. The script will generate the file ./target/demo-backend.jar
+Run `./mvnw clean package` in order to package the spring boot backend server. The script will generate the file ./target/demo-backend.jar
 
-To run with the development configurations, just run `java -jar ./target/demo-backend.jar`.
-To run with the production profile, run `java -jar -Dspring.profiles.active=production ./target/demo-backend.jar`
-
-
-# How to build a docker image
-
-just run `mvn clean package && docker build -t demo-backend .`
-and to start a docker container `docker run --rm -it -p 8080:8080 demo-backend`
+To run with the development configurations, just run `./mvnw spring-boot:run`.
+To run with the production profile:
+    First, run `./mvnw clean package`
+    Finally, run `java -jar -Dspring.profiles.active=production ./target/demo-backend.jar`

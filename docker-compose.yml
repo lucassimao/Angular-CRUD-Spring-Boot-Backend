@@ -50,7 +50,7 @@ services:
         - DATABASE_TYPE=MYSQL
         - DB_USERNAME=app
         - DB_PASSWORD=123
-        - DB_NAME=crud-angular-spring-boot
+        - DB_NAME=crud_angular_spring_boot
         - KEYSTORE=/home/keystore.jks
         - KEYSTORE_STORE_PASSWORD=123456
         - KEYSTORE_KEY_PASSWORD=123456
@@ -68,7 +68,7 @@ services:
       - MYSQL_USER=app
       - MYSQL_PASSWORD=123
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_DATABASE=crud-angular-spring-boot
+      - MYSQL_DATABASE=crud_angular_spring_boot
     container_name: demo-mysql
     image: mysql:5.7.26
     volumes:

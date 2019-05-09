@@ -73,6 +73,6 @@ services:
     image: mysql:5.7.26
     volumes:
       - db-data:/var/lib/mysql:rw
-      - ./keycloak.sql:/docker-entrypoint-initdb.d/keycloak.sql
+      - ./setup_mysql.sql:/docker-entrypoint-initdb.d/setup_mysql.sql
 
 

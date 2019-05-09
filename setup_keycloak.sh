@@ -18,10 +18,13 @@ echo 'Criando usuário user1 ...'
 echo 'Atualizando senha do usuário user1 ...'
 ./kcadm.sh set-password -r master --username user1 -p 11235
 
-echo 'Cadastrando keystore ...'
 
-./kcadm.sh create components -r master -s name='demo-angular' -s providerId=java-keystore \
--s providerType=org.keycloak.keys.KeyProvider -s parentId=master -s 'config.priority=["101"]' \
--s 'config.enabled=["true"]' -s 'config.active=["true"]' \
--s 'config.keystore=['\"${KEYSTORE}\"']' -s 'config.keystorePassword=['\"${KEYSTORE_STORE_PASSWORD}\"']' \
--s 'config.keyPassword=['\"${KEYSTORE_KEY_PASSWORD}\"']' -s 'config.keyAlias=['\"${KEYSTORE_ALIAS}\"']'
+if [[ -n "${KEYSTORE}" ]]; then
+    echo 'Cadastrando keystore ...'
+
+    ./kcadm.sh create components -r master -s name='demo-angular' -s providerId=java-keystore \
+    -s providerType=org.keycloak.keys.KeyProvider -s parentId=master -s 'config.priority=["101"]' \
+    -s 'config.enabled=["true"]' -s 'config.active=["true"]' \
+    -s 'config.keystore=['\"${KEYSTORE}\"']' -s 'config.keystorePassword=['\"${KEYSTORE_STORE_PASSWORD}\"']' \
+    -s 'config.keyPassword=['\"${KEYSTORE_KEY_PASSWORD}\"']' -s 'config.keyAlias=['\"${KEYSTORE_ALIAS}\"']'
+fi

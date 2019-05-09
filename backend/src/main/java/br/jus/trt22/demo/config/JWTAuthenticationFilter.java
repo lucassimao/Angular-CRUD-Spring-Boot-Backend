@@ -2,6 +2,8 @@ package br.jus.trt22.demo.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -39,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,22 +50,26 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
-    @Value("${keycloak.keystore}")
+    @Value("${keycloak.keystore:}")
     private String keystoreFile;
 
-    @Value("${keystore.key.password}")
+    @Value("${keystore.key.password:}")
     private String keyPassword;
 
-    @Value("${keystore.store.password}")
+    @Value("${keystore.store.password:}")
     private String storePassword;
 
-    @Value("${keystore.alias}")
+    @Value("${keystore.alias:}")
     private String storeAlias;
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -72,6 +80,15 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
     @Override
     protected void initFilterBean() throws ServletException {
         try {
+
+            if (StringUtils.isEmpty(this.keystoreFile) || Files.notExists(Paths.get(this.keystoreFile))){
+                if (this.env.acceptsProfiles(Profiles.of("production"))){
+                    throw new IllegalStateException("Não é possível iniciar em produção com um keyStore inexistente: " + this.keystoreFile);
+                } else{
+                    this.logger.info("Ignorando keystore ... ");
+                    return;
+                }
+            }
             FileInputStream fis = new FileInputStream(this.keystoreFile);
 
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -85,7 +102,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException e) {
             logger.error("Não foi possível ler o keystore", e);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Não foi possível ler o keystore", e);
         }
     }

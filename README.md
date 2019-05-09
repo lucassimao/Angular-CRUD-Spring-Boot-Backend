@@ -24,3 +24,6 @@ The folder **backend** contains the spring boot project for the resful backend. 
 `docker exec -i  demo-keycloak1 bash < setup_keycloak.sh`
 `docker exec -i  demo-mysql mysql -u app -p123 -D crud_angular_spring_boot < backend/src/main/resources/data-mysql.sql`
 - Now, you can access the angular frontend at http://localhost using the login **`user1`** and password **`1135`**
+
+## Demo
+![Demo](/demo.gif?raw=true "Demo")
